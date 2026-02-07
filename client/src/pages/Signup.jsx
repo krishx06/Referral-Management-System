@@ -1,19 +1,15 @@
 import { useState } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { register } from "../api/auth.api";
 import "../styles/main.css";
 
-function Login({ onSwitch }) {
-  const { login } = useAuth();
-
-  const TEST_EMAIL = "krish@test.com";
-  const TEST_PASSWORD = "password123";
-
+function Signup({ onSwitch }) {
   const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,45 +21,33 @@ function Login({ onSwitch }) {
     setLoading(true);
 
     try {
-      await login(form);
-      window.location.reload(); 
+      await register(form);
+      alert("Signup successful. Please login.");
+      onSwitch();
     } catch (err) {
-      setError("Invalid email or password");
+      setError(err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
     }
   };
 
-  const fillTestCredentials = () => {
-    setForm({
-      email: TEST_EMAIL,
-      password: TEST_PASSWORD,
-    });
-    setError("");
-  };
-
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2 className="login-title">Referral Management System</h2>
-        <p className="login-subtitle">Login to continue</p>
-
-        <div className="login-test-box">
-          <p><strong>Test Credentials</strong></p>
-          <p>Email: <code>{TEST_EMAIL}</code></p>
-          <p>Password: <code>{TEST_PASSWORD}</code></p>
-          <button
-            type="button"
-            className="test-credentials-btn"
-            onClick={fillTestCredentials}
-          >
-            Use Test Credentials
-          </button>
-        </div>
+        <h2 className="login-title">Create Account</h2>
+        <p className="login-subtitle">Sign up to continue</p>
 
         {error && <p className="login-error">{error}</p>}
 
         <form onSubmit={handleSubmit} className="login-form">
+          <input
+            type="name"
+            name="name"
+            placeholder="Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
           <input
             type="email"
             name="email"
@@ -83,22 +67,23 @@ function Login({ onSwitch }) {
           />
 
           <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Signing up..." : "Sign Up"}
           </button>
         </form>
+
         <p style={{ marginTop: "12px", fontSize: "14px" }}>
-  New user?{" "}
-  <button
-    type="button"
-    className="link-btn"
-    onClick={onSwitch}
-  >
-    Sign up
-  </button>
-</p>
+          Already have an account?{" "}
+          <button
+            type="button"
+            className="link-btn"
+            onClick={onSwitch}
+          >
+            Login
+          </button>
+        </p>
       </div>
     </div>
   );
 }
 
-export default Login;
+export default Signup;
