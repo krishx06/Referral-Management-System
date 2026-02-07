@@ -3,7 +3,6 @@ import { getCandidates } from "../api/candidate.api";
 import { removeToken } from "../utils/auth";
 import CandidateCard from "../components/CandidateCard";
 import CandidateForm from "../components/CandidateForm";
-import SearchBar from "../components/SearchBar";
 import MetricsCards from "../components/MetricsCards";
 import "../styles/main.css";
 
@@ -12,6 +11,7 @@ function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [activeTab, setActiveTab] = useState("dashboard");
 
   useEffect(() => {
     fetchCandidates();
@@ -44,35 +44,87 @@ function Dashboard() {
   });
 
   return (
-    <div className="dashboard-container">
-      <header className="dashboard-header">
-        <h2>Referral Management System</h2>
-        <button onClick={handleLogout}>Logout</button>
-      </header>
+    <div className="dashboard-layout">
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <span className="logo-text">Referral Management</span>
+        </div>
 
-      <main className="dashboard-content">
-        <MetricsCards refreshKey={refreshKey} />
-        <CandidateForm onSuccess={fetchCandidates} />
+        <nav className="sidebar-nav">
+          <p className="nav-label">MENU</p>
+          <button
+            className={`nav-item ${activeTab === "dashboard" ? "active" : ""}`}
+            onClick={() => setActiveTab("dashboard")}
+          >
+            <span></span> Dashboard
+          </button>
+          <button
+            className={`nav-item ${activeTab === "add" ? "active" : ""}`}
+            onClick={() => setActiveTab("add")}
+          >
+            <span></span> Add Referral
+          </button>
+        </nav>
 
-        <h3>Candidates</h3>
+        <button className="sidebar-logout" onClick={handleLogout}>
+          Logout
+        </button>
+      </aside>
 
-        <SearchBar value={searchTerm} onChange={setSearchTerm} />
+      <main className="main-content">
+        <header className="main-header">
+          <h1>
+            {activeTab === "dashboard" ? "Overview" : "Add New Referral"}
+          </h1>
+          {activeTab === "dashboard" && (
+            <div className="header-search">
+              <input
+                type="text"
+                placeholder="Search candidates..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          )}
+        </header>
 
-        {loading ? (
-          <p>Loading candidates...</p>
-        ) : filteredCandidates.length === 0 ? (
-          <p>No matching candidates found.</p>
-        ) : (
-          <div className="candidate-list">
-            {filteredCandidates.map((candidate) => (
-                <CandidateCard
-                key={candidate._id}
-                candidate={candidate}
-                onStatusUpdate={fetchCandidates}
-                />
-            ))}
-          </div>
-        )}
+        <div className="main-body">
+          {activeTab === "dashboard" ? (
+            <>
+              <section className="stats-section">
+                
+                <h2>Your Referral Stats</h2>
+                <MetricsCards refreshKey={refreshKey} />
+              </section>
+
+              <section className="candidates-section">
+                <h3>All Candidates</h3>
+                {loading ? (
+                  <p className="loading-text">Loading candidates...</p>
+                ) : filteredCandidates.length === 0 ? (
+                  <p className="empty-text">No candidates found.</p>
+                ) : (
+                  <div className="candidate-list">
+                    {filteredCandidates.map((candidate) => (
+                      <CandidateCard
+                        key={candidate._id}
+                        candidate={candidate}
+                        onStatusUpdate={fetchCandidates}
+                      />
+                    ))}
+                  </div>
+                )}
+              </section>
+            </>
+          ) : (
+            <section className="form-section">
+              <CandidateForm onSuccess={() => {
+                fetchCandidates();
+                setActiveTab("dashboard");
+              }} />
+            </section>
+          )}
+        </div>
       </main>
     </div>
   );

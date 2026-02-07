@@ -26,7 +26,7 @@ function Login({ onSwitch }) {
 
     try {
       await login(form);
-      window.location.reload(); 
+      window.location.reload();
     } catch (err) {
       setError("Invalid email or password");
     } finally {
@@ -44,58 +44,62 @@ function Login({ onSwitch }) {
 
   return (
     <div className="login-container">
-      <div className="login-card">
-        <h2 className="login-title">Referral Management System</h2>
-        <p className="login-subtitle">Login to continue</p>
+      <div className="login-left">
+        <h1>Referral Management</h1>
+        <p>Track and manage candidate referrals</p>
+      </div>
 
-        <div className="login-test-box">
-          <p><strong>Test Credentials</strong></p>
-          <p>Email: <code>{TEST_EMAIL}</code></p>
-          <p>Password: <code>{TEST_PASSWORD}</code></p>
-          <button
-            type="button"
-            className="test-credentials-btn"
-            onClick={fillTestCredentials}
-          >
-            Use Test Credentials
-          </button>
+      <div className="login-right">
+        <div className="login-card">
+          <h2 className="login-title">Welcome Back</h2>
+          <p className="login-subtitle">Sign in to your account</p>
+
+          <div className="login-test-box">
+            <strong>Test Credentials</strong>
+            <p>Email: <code>{TEST_EMAIL}</code></p>
+            <p>Password: <code>{TEST_PASSWORD}</code></p>
+            <button
+              type="button"
+              className="test-credentials-btn"
+              onClick={fillTestCredentials}
+            >
+              Use Test Credentials
+            </button>
+          </div>
+
+          {error && <p className="login-error">{error}</p>}
+
+          <form onSubmit={handleSubmit} className="login-form">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email address"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+
+            <button type="submit" disabled={loading}>
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+
+          <p className="login-switch">
+            New user?{" "}
+            <button type="button" className="link-btn" onClick={onSwitch}>
+              Create account
+            </button>
+          </p>
         </div>
-
-        {error && <p className="login-error">{error}</p>}
-
-        <form onSubmit={handleSubmit} className="login-form">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email address"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-
-          <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
-        <p style={{ marginTop: "12px", fontSize: "14px" }}>
-  New user?{" "}
-  <button
-    type="button"
-    className="link-btn"
-    onClick={onSwitch}
-  >
-    Sign up
-  </button>
-</p>
       </div>
     </div>
   );

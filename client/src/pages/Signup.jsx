@@ -22,7 +22,7 @@ function Signup({ onSwitch }) {
 
     try {
       await register(form);
-      alert("Signup successful. Please login.");
+      alert("Account created! Please sign in.");
       onSwitch();
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
@@ -33,54 +33,57 @@ function Signup({ onSwitch }) {
 
   return (
     <div className="login-container">
-      <div className="login-card">
-        <h2 className="login-title">Create Account</h2>
-        <p className="login-subtitle">Sign up to continue</p>
+      <div className="login-left">
+        <h1>Referral Management</h1>
+        <p>Track and manage candidate referrals</p>
+      </div>
 
-        {error && <p className="login-error">{error}</p>}
+      <div className="login-right">
+        <div className="login-card">
+          <h2 className="login-title">Create Account</h2>
+          <p className="login-subtitle">Get started with your account</p>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <input
-            type="name"
-            name="name"
-            placeholder="Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email address"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
+          {error && <p className="login-error">{error}</p>}
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
+          <form onSubmit={handleSubmit} className="login-form">
+            <input
+              type="text"
+              name="name"
+              placeholder="Full name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email address"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Signing up..." : "Sign Up"}
-          </button>
-        </form>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
 
-        <p style={{ marginTop: "12px", fontSize: "14px" }}>
-          Already have an account?{" "}
-          <button
-            type="button"
-            className="link-btn"
-            onClick={onSwitch}
-          >
-            Login
-          </button>
-        </p>
+            <button type="submit" disabled={loading}>
+              {loading ? "Creating account..." : "Create Account"}
+            </button>
+          </form>
+
+          <p className="login-switch">
+            Already have an account?{" "}
+            <button type="button" className="link-btn" onClick={onSwitch}>
+              Sign in
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

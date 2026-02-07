@@ -21,42 +21,39 @@ function CandidateCard({ candidate, onStatusUpdate }) {
 
   return (
     <div className="candidate-card">
-      <h4>{candidate.name}</h4>
-
-      <p>
-        <strong>Job Title:</strong> {candidate.jobTitle}
-      </p>
-
-      <p>
-        <strong>Status:</strong>
-      </p>
-
-      <StatusDropdown
-        candidateId={candidate._id}
-        currentStatus={candidate.status}
-        onUpdated={onStatusUpdate}
-      />
-
-      {candidate.resumeUrl ? (
-        <a
-          href={`http://localhost:5000${candidate.resumeUrl}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="resume-link"
+      <div className="card-header">
+        <h4 className="card-name">{candidate.name}</h4>
+        <button
+          className="delete-btn"
+          onClick={handleDelete}
+          disabled={deleting}
         >
-          📄 View Resume
-        </a>
-      ) : (
-        <p className="no-resume">No resume uploaded</p>
-      )}
+          {deleting ? "..." : "×"}
+        </button>
+      </div>
 
-      <button
-        className="delete-btn"
-        onClick={handleDelete}
-        disabled={deleting}
-      >
-        {deleting ? "Deleting..." : "Delete"}
-      </button>
+      <p className="card-job">{candidate.jobTitle}</p>
+
+      <div className="card-footer">
+        <StatusDropdown
+          candidateId={candidate._id}
+          currentStatus={candidate.status}
+          onUpdated={onStatusUpdate}
+        />
+
+        {candidate.resumeUrl ? (
+          <a
+            href={`http://localhost:5000${candidate.resumeUrl}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="resume-link"
+          >
+            View Resume
+          </a>
+        ) : (
+          <span className="no-resume">No resume</span>
+        )}
+      </div>
     </div>
   );
 }
