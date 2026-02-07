@@ -15,8 +15,8 @@ const candidateSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: [true, "Phone number is required"],
-      match: [/^[6-9]\d{9}$/, "Please use a valid phone number"],
+      required: true,
+      match: [/^\d{10}$/, "Phone number must be a 10-digit number"],
     },
     jobTitle: {
       type: String,
@@ -29,6 +29,7 @@ const candidateSchema = new mongoose.Schema(
     },
     resumeUrl: {
       type: String,
+      default: null,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
