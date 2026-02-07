@@ -1,11 +1,21 @@
 const errorHandler = (err, req, res, next) => {
-  console.error(err.stack);
+  if (err.message.includes("PDF")) {
+    return res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
 
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  if (err.code === "LIMIT_FILE_SIZE") {
+    return res.status(400).json({
+      success: false,
+      message: "Resume file size should be less than 2MB",
+    });
+  }
 
-  res.status(statusCode).json({
+  res.status(500).json({
     success: false,
-    message: err.message || "Server Error",
+    message: err.message || "Server error",
   });
 };
 
