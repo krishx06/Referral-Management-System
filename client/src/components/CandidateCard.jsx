@@ -43,7 +43,7 @@ function CandidateCard({ candidate, onStatusUpdate }) {
 
         {candidate.resumeUrl ? (
           <a
-            href={`http://localhost:5000${candidate.resumeUrl}`}
+            href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}${candidate.resumeUrl}`}
             target="_blank"
             rel="noopener noreferrer"
             className="resume-link"
