@@ -9,18 +9,27 @@ export const createCandidate = async (req, res, next) => {
             throw new Error("All fields are required");
         }
 
-        const candidate = await Candidate.create({
+        const candidateData = {
             name,
             email,
             phone,
             jobTitle,
-            resumeUrl: req.file ? `/uploads/${req.file.filename}` : null,
             user: req.user._id,
-        });
+        };
+
+        if (req.file) {
+            candidateData.resumeData = req.file.buffer.toString("base64");
+            candidateData.resumeName = req.file.originalname;
+        }
+
+        const candidate = await Candidate.create(candidateData);
 
         res.status(201).json({
             success: true,
-            data: candidate,
+            data: {
+                ...candidate.toObject(),
+                resumeData: undefined,
+            },
         });
     } catch (error) {
         next(error);
@@ -29,15 +38,36 @@ export const createCandidate = async (req, res, next) => {
 
 export const getCandidates = async (req, res, next) => {
     try {
-        const candidates = await Candidate.find({ user: req.user._id }).sort({
-            createdAt: -1,
-        });
+        const candidates = await Candidate.find({ user: req.user._id })
+            .select("-resumeData")
+            .sort({ createdAt: -1 });
 
         res.json({
             success: true,
             count: candidates.length,
             data: candidates,
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getResume = async (req, res, next) => {
+    try {
+        const candidate = await Candidate.findOne({
+            _id: req.params.id,
+            user: req.user._id,
+        });
+
+        if (!candidate || !candidate.resumeData) {
+            res.status(404);
+            throw new Error("Resume not found");
+        }
+
+        const buffer = Buffer.from(candidate.resumeData, "base64");
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", `inline; filename="${candidate.resumeName}"`);
+        res.send(buffer);
     } catch (error) {
         next(error);
     }
