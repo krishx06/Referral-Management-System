@@ -1,9 +1,10 @@
 import { useState } from "react";
 import StatusDropdown from "./StatusDropdown";
-import { deleteCandidate } from "../api/candidate.api";
+import { deleteCandidate, getResume } from "../api/candidate.api";
 
 function CandidateCard({ candidate, onStatusUpdate }) {
   const [deleting, setDeleting] = useState(false);
+  const [loadingResume, setLoadingResume] = useState(false);
 
   const handleDelete = async () => {
     if (!window.confirm(`Delete ${candidate.name}?`)) return;
@@ -16,6 +17,19 @@ function CandidateCard({ candidate, onStatusUpdate }) {
       alert("Failed to delete candidate");
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleViewResume = async () => {
+    setLoadingResume(true);
+    try {
+      const blob = await getResume(candidate._id);
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    } catch (err) {
+      alert("Failed to load resume");
+    } finally {
+      setLoadingResume(false);
     }
   };
 
@@ -42,14 +56,14 @@ function CandidateCard({ candidate, onStatusUpdate }) {
         />
 
         {candidate.resumeName ? (
-          <a
-            href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/candidates/${candidate._id}/resume`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
             className="resume-link"
+            onClick={handleViewResume}
+            disabled={loadingResume}
+            style={{ cursor: "pointer", background: "none", border: "none" }}
           >
-            View Resume
-          </a>
+            {loadingResume ? "Loading..." : "View Resume"}
+          </button>
         ) : (
           <span className="no-resume">No resume</span>
         )}

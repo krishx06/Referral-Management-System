@@ -28,3 +28,10 @@ export const deleteCandidate = async (id) => {
     const response = await api.delete(`/candidates/${id}`);
     return response.data;
 };
+
+export const getResume = async (id) => {
+    const response = await api.get(`/candidates/${id}/resume`, {
+        responseType: "blob",
+    });
+    return response.data;
+};
