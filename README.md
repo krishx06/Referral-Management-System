@@ -18,7 +18,7 @@ A full-stack web application to manage candidate referrals, built with React and
 - **MongoDB** - NoSQL database with Mongoose ODM
 - **Validation** - Email format, phone number (10 digits), PDF-only uploads
 - **Error Handling** - Centralized error middleware with proper HTTP status codes
-- **Resume Upload** - PDF file uploads with 2MB size limit
+- **Resume Upload** - PDF files stored as Base64 in MongoDB (2MB max)
 
 ## Tech Stack
 
@@ -109,6 +109,7 @@ Password: password123
 | POST | `/api/candidates` | Create new candidate |
 | PUT | `/api/candidates/:id/status` | Update candidate status |
 | DELETE | `/api/candidates/:id` | Delete candidate |
+| GET | `/api/candidates/:id/resume` | Download candidate resume |
 | GET | `/api/candidates/metrics` | Get dashboard metrics |
 
 ## Assumptions & Limitations
@@ -120,7 +121,7 @@ Password: password123
 4. Candidate status follows the flow: Pending → Reviewed → Hired
 
 ### Limitations
-1. **Resume Storage** - Resumes are stored locally on the server filesystem (cloud storage not implemented).
+1. **Resume Storage** - Resumes are stored as Base64 in MongoDB (max 2MB per file). For larger files, consider cloud storage (Cloudinary/S3).
 2. **No Password Reset** - Password recovery feature not implemented
 3. **No Pagination** - All candidates loaded at once (may affect performance with large datasets)
 4. **Single User Session** - No multi-device session management
