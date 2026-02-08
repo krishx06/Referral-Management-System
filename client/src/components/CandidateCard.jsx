@@ -41,9 +41,9 @@ function CandidateCard({ candidate, onStatusUpdate }) {
           onUpdated={onStatusUpdate}
         />
 
-        {candidate.resumeUrl ? (
+        {candidate.resumeName ? (
           <a
-            href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}${candidate.resumeUrl}`}
+            href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/candidates/${candidate._id}/resume`}
             target="_blank"
             rel="noopener noreferrer"
             className="resume-link"
